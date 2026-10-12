@@ -1,8 +1,10 @@
 SELECT
-  COUNT(*) FILTER (WHERE delta_m3 < 0) AS negative_intervals,
-  COUNT(DISTINCT anon_id) FILTER (WHERE delta_m3 < 0) AS negative_meters,
-  COUNT(*) FILTER (WHERE daily_m3 < 0) AS negative_daily_intervals,
-  COUNT(DISTINCT anon_id) FILTER (WHERE daily_m3 < 0) AS negative_daily_meters
+  COUNT(*) FILTER (WHERE delta_m3 < 0) AS raw_negative_intervals,
+  COUNT(DISTINCT anon_id) FILTER (WHERE delta_m3 < 0) AS raw_negative_meters,
+  COUNT(*) FILTER (WHERE delta_m3 < -0.000000001) AS significant_negative_intervals,
+  COUNT(DISTINCT anon_id) FILTER (WHERE delta_m3 < -0.000000001) AS significant_negative_meters,
+  COUNT(*) FILTER (WHERE daily_m3 < -0.000000001) AS significant_daily_intervals,
+  COUNT(DISTINCT anon_id) FILTER (WHERE daily_m3 < -0.000000001) AS significant_daily_meters
 FROM vaviot.v_reading_deltas;
 
 SELECT
@@ -12,7 +14,7 @@ SELECT
   MIN(data) AS first_date,
   MAX(data) AS last_date
 FROM vaviot.v_reading_deltas
-WHERE delta_m3 < 0
+WHERE delta_m3 < -0.000000001
 GROUP BY anon_id
 ORDER BY negative_count DESC, largest_drop_m3 ASC
 LIMIT 20;
@@ -33,7 +35,7 @@ SELECT
       AND s.data BETWEEN d.prev_date AND d.data
   )) AS meters_with_reset
 FROM vaviot.v_reading_deltas d
-WHERE d.delta_m3 < 0;
+WHERE d.delta_m3 < -0.000000001;
 
 WITH jumps AS (
   SELECT d.anon_id, p.model, d.delta_m3,

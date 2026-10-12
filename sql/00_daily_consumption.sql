@@ -1,5 +1,27 @@
 -- Daily water consumption calculation
 -- PostgreSQL 18
+CREATE SCHEMA IF NOT EXISTS vaviot;
+
+CREATE TABLE IF NOT EXISTS vaviot.pribory (
+  anon_id text PRIMARY KEY,
+  bs text,
+  tip text,
+  model text,
+  mesyac_vypuska text
+);
+
+CREATE TABLE IF NOT EXISTS vaviot.pokazaniya (
+  anon_id text,
+  data date,
+  pokazanie numeric,
+  paketov_za_sutki integer
+);
+
+CREATE TABLE IF NOT EXISTS vaviot.sobytiya (
+  anon_id text,
+  data date,
+  sobytie text
+);
 
 CREATE OR REPLACE VIEW vaviot.v_reading_deltas AS
 WITH readings AS (

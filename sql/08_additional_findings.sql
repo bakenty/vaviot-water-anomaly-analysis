@@ -31,8 +31,7 @@ LIMIT 20;
 WITH meter_flags AS (
   SELECT
     anon_id,
-    BOOL_OR(delta_m3 < 0) AS has_negative
-  FROM vaviot.v_reading_deltas
+    BOOL_OR(delta_m3 < -0.000000001) AS has_negative  FROM vaviot.v_reading_deltas
   GROUP BY anon_id
 )
 SELECT
